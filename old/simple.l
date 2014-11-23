@@ -4,9 +4,9 @@
   #include <stdio.h>
   #include <stdlib.h>
 
-  #define PROGRAM "jtRuby"
+  #define PROGRAM "jtSimple"
   #define VERSION "v.0.0.1a"
-  int num_lines = 1, num_chars = 1; // hopefully this will help with error messages!
+  //int num_lines = 1, num_chars = 1; // hopefully this will help with error messages!
   int use_a_prompt = 0;
   void prompt(void);
   void ruby_exit(int);
@@ -19,6 +19,13 @@ FLOAT [0-9]+"."[0-9]+
 /* QUIT exit|quit */
 
 %% /* rules */
+
+if {
+  printf("=> conditional: %s\n", yytext);
+  if (use_a_prompt) {
+    prompt();
+  }
+}
 
 exit|quit {
   printf("\nbye bye!\n");
@@ -46,11 +53,11 @@ username  {
   }
 }
 
-\n num_chars++, num_lines++;
 
 . {
-  num_chars++;
-  printf("[line: %d; char: %d]: unrecognized input: %s\n", num_lines, num_chars, yytext);
+  //\n num_chars++, num_lines++; #this should go above the current rule-block
+  //num_chars++;
+  //printf("[line: %d; char: %d]: unrecognized input: %s\n", num_lines, num_chars, yytext);
   if (use_a_prompt) {
     prompt();
   }
@@ -63,11 +70,12 @@ void welcome(void) {
 }
 
 void prompt(void) {
-  printf("\n%s:%d> ", VERSION, num_lines);
+  //printf("\n%s:%d> ", VERSION, num_lines);
+  printf("\n%s> ", VERSION);
 }
 
 void ruby_exit(int exit_code) {
-  printf("%d characters across %d lines\n", num_chars, num_lines);
+  //printf("%d characters across %d lines\n", num_chars, num_lines);
   exit(exit_code);
 }
 
@@ -81,8 +89,8 @@ int main(int ac, char** av) {
     yyin = stdin;
   }
 
-  welcome();
   if (use_a_prompt) {
+    welcome();
     prompt();
   }
   yylex();
